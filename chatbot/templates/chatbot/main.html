@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>박갈배씨랑 대화해보세요!</title>
+    <link rel="icon" href="/static/image/박갈배.png">
+
+    <!--font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Single+Day&display=swap" rel="stylesheet">
+
+    <!--JQuery를 사용하기 위한 코드-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!--bootstrap-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!--style-->
+    <style>
+        /* 그라데이션 색상 : #0f0c29, #302b63, #24243e */
+        body { 
+            background : #24243e ;
+            font-family: "Single Day", cursive;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        .que {
+            background-color: rgb(81, 75, 189);
+            text-align: right;
+            width:250px;
+            padding:10px;
+            margin-top : 10px;
+            margin-bottom: 10px;
+            border-radius : 5px;
+            color : white;
+            font-size : 20px;
+        }
+        
+        .ans {
+            margin-top : 10px;
+            margin-bottom: 10px;
+        }
+
+        .data {
+            background-color:rgb(55,49,159);
+            width:250px;
+            padding:10px;
+            border-radius : 5px;
+            color : white;
+            text-align: left;
+            font-size: 20px;
+        }
+
+        #navbar {
+            background-color: white;
+            border-radius : 10px;
+            width : 500px;
+            height : 60px;
+            margin-top : 70px;
+            margin-bottom: 20px;
+            font-size : 30px;
+        }
+
+        #navbar:hover {
+            background: linear-gradient(90deg, rgba(82,72,255,1) 0%, rgba(130,130,255,1) 58%, rgba(70,224,255,1) 100%);
+            animation: gradient-animation 10s ease infinite;
+        }
+
+        #navbar:focus {
+            background: linear-gradient(90deg, rgba(82,72,255,1) 0%, rgba(130,130,255,1) 58%, rgba(70,224,255,1) 100%);
+            animation: gradient-animation 10s ease infinite;
+        }
+ 
+        @keyframes gradient-animation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        #chatbox {
+            background : white;
+            border-radius : 15px;
+            width : 500px;
+            height : 400px;
+            margin-bottom : 20px;
+            margin : auto;
+            overflow : auto;
+        }
+
+        #user-input {
+            margin:20px auto;
+            border-radius : 10px;
+            border-style: hidden;
+            width : 300px;
+            height : 50px;
+            font-size: 20px;
+        }
+
+        .custom-input {
+            border: hidden;
+            border-radius: 5px; /* 모서리 둥글게 */
+        }
+
+        .custom-input:focus {
+            border: hidden;
+            outline: none; /* 기본 포커스 아웃라인 제거 */
+        }
+
+        #send-button {
+            margin:20px auto;
+            border-radius : 10px;
+            border : hidden;
+            color : white;
+            font-size : 20px;
+            width : 60px;
+            height : 50px;
+            background: linear-gradient(90deg, rgba(82,72,255,1) 0%, rgba(130,130,255,1) 58%, rgba(70,224,255,1) 100%);
+        }
+
+        /* 스크롤 커스텀마이징 */
+        /* 스크롤바 전체 */
+        ::-webkit-scrollbar {
+            width: 12px; /* 세로 스크롤바 너비 */
+            height: 12px; /* 가로 스크롤바 높이 */
+            
+        }
+
+        /* 스크롤바 배경 */
+        ::-webkit-scrollbar-track {
+            background: none; /* 배경 색상 */
+            border-radius: 10px; /* 둥근 모서리 */
+            margin:10px;
+        }
+
+        /* 스크롤바 핸들 */
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(130deg,#7474BF, #348AC7); /* 핸들 색상 */
+            border-radius: 10px; /* 둥근 모서리 */
+        }
+
+        /* 스크롤바 핸들에 마우스를 올렸을 때 */
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(130deg,#7474BF, #348AC7); /* 핸들 색상 (hover) */
+        }
+    </style>
+
+    <!--CSRF 보안 오류-->
+    <script>
+        $.ajaxSetup({
+          headers: { "X-CSRFToken": '{{csrf_token}}' }
+        });
+    </script>
+</head>
+<body>
+    <div class="container-fluid text-center">
+        <div class="row">
+            <div class="col">
+            </div>
+            <!--main-->
+            <div class="col">
+
+                <div class="row">
+                    <div class="dropdown">
+                        <button id="navbar" class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span style="text-align:center; color:black;">매뉴얼을 원하시면 저를 눌러주세요!</span>
+                        </button>
+                        <ul class="dropdown-menu" style="margin:15px; width:500px; height:100px; overflow:auto; font-size:20px; text-align:center;">
+                          <li>1. 챗봇 메시지창을 클릭하여 대화창을 연다.</li>
+                          <li>2. 대화 시작하기</li>
+                          <li>&nbsp;&nbsp;(처음 대화는 간단한 대화로 시작한다.)</li>
+                          <li>&nbsp;&nbsp;("안녕하세요", "메뉴", "주문")</li>
+                          <li>3. 대화에서 얻은 답을 바텐더에게 묻는다.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!--대화창-->
+                    <div id="chatbox"></div>
+                </div>
+
+                <!--입력창-->
+                <div class="row">
+                    <input type="text" id="user-input" class="form-control custom-input" placeholder="박갈배씨한테 질문해보세용">
+                    <button id="send-button">전송</button>
+                </div> 
+
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            $('#send-button').click(function() {
+                let userMessage = $('#user-input').val();
+                if (userMessage == '') alert("내용을 입력해주세요!!");
+                else {
+                    $('#chatbox').append('<div class="row"><div class="col-sm-5"> </div>\
+                        <div class="col-sm-6 que">' + userMessage + '</div></div>');
+                    $('#user-input').val('');
+                    $.post('', { message: userMessage }, function(data) {
+                        $('#chatbox').append('\
+                            <div class="row ans">\
+                            <div class="col-sm-2">\
+                            <img src="/static/image/박갈배.png" width="50px" height="50px" style="border-radius:5px">\
+                            </div>\
+                            <div class="col-sm-6 data">' + data.response + '</div></div>');
+                    });
+                    $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+                }
+            });
+
+            // 엔터 키로 전송
+            $('#user-input').keypress(function(e) {
+                if (e.which === 13) {
+                    $('#send-button').click();
+                }
+            });
+        });
+    </script>
+    </body>
+</html>
